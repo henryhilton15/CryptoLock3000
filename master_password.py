@@ -6,7 +6,8 @@ from Crypto.Protocol.KDF import PBKDF2
 
 masterpassword = ""
 operation = "create"
-loginInfoFile = "infofile.txt"
+logininfofile = "infofile.txt"
+KEY_CREATED = "Master key:"
 loginInfoObjects = []
 
 try:
@@ -32,7 +33,12 @@ if (operation != "create") and (operation != "add") and (operation != "get"):
 
 if (operation == "create"):
 	# check to see if a master password has already been created
-	if (master password has already been created):
+	# if (master password has already been created):
+	infofile = open(logininfofile, 'r')
+	# if infofile.readline() contains some word that lets us know password has been created
+	firstline = infofile.readline()
+	infofile.close()
+	if (KEY_CREATED in firstline):
 		print("Error! Master password has already been created. Type 'a' to add a password or 'g' to get a password.")
 		switchoperation = ""
 		switchoperation = input()
@@ -46,6 +52,11 @@ if (operation == "create"):
 		print("Create master password by entering it now.\nMaster password must be at least 8 chars long, contain an upper case letter, a lower case letter, and a digit")
 		masterpassword = input()
 		validate_pw(masterpassword)
+		# need to store some form of password in logininfofile. either hash it or pbkdf2 with salt?
+		infofile = open(logininfofile, 'w')
+		infofile.write(KEY_CREATED) # + some form of masterpassword# +'\b')
+			infofile.close()
+
 
 
 if (operation == "add"):
@@ -53,7 +64,7 @@ if (operation == "add"):
 	print("Enter master password")
 	inputmpw = input()
 	#if (inputmpw == masterpassword):
-	if (inputmpw == )
+	if (inputmpw == "something"): #some form of masterpassword#)
 		mode = "e"
 		password = ""
 		username = ""
@@ -70,6 +81,9 @@ if (operation == "add"):
 			username = input()
 			print("Enter URL associated with password")
 			URL = input()
+			newLogin = (username, URL, cbc_encrypt(masterkey, password))
+			infofile = open(logininfofile, 'w')
+			infofile.write("\n" + format_loginInfo(newLogin))
 		elif mode == "n":
 			print("Enter username")
 			username = input()
@@ -77,6 +91,9 @@ if (operation == "add"):
 			URL = input()
 			password = random_pw_gen()
 			print("Password generated.")
+			newLogin = (username, URL, cbc_encrypt(masterkey, password))
+			infofile = open(logininfofile, 'w')
+			infofile.write("\n" + format_loginInfo(newLogin))
 
 
 if (operation == "get"):
@@ -208,7 +225,10 @@ def cbc_decrypt(keystring, encrypted):
     return password
 
 
+def lookup_url(url):
+	matching_login_list = []
+	for loginInfo in loginInfoObjects:
+		if loginInfo.url == url:
+			matching_login_list.append(loginInfo)
 
-
-
-
+	return matching_login_list

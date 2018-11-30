@@ -152,6 +152,9 @@ class LoginInfo:
 		self.url = str(url)
 		self.password = str(password)
 
+	def toString():
+		return "Username: " + self.username + " | URL: " + self.url
+
 
 def init_login_objects():
 	for line in loginInfoFile:
@@ -233,19 +236,14 @@ def lookup_url(url):
 
 	return matching_login_list
 
-def main():
-	for i in range(10):
-		username = i
-		url = i % 3
-		password = 123455
-		loginInfo = loginInfo(username, url, password)
-		loginInfoObjects.append(loginInfo)
+def lookup_username(username):
+	matching_login_list = []
+	for loginInfo in loginInfoObjects:
+		if loginInfo.username == username:
+			matching_login_list.append(loginInfo)
 
-	url_list = lookup_url(2)
-	print(url_list)
+	return matching_login_list
 
-if "__name__" == "__main__":
-	main()
 
 
 

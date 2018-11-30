@@ -1,13 +1,14 @@
 import sys, getopt
 import random
 from Crypto.Protocol.KDF import PBKDF2
+from Crypto.Hash import SHA256
 
 #First decision is whether the user is creating a master password, adding a new password, or getting a password
 
 masterpassword = ""
 operation = "create"
 logininfofile = "infofile.txt"
-KEY_CREATED = "Master key:"
+KEY_CREATED = "Hash of master key:"
 loginInfoObjects = []
 
 try:
@@ -52,10 +53,8 @@ if (operation == "create"):
 		print("Create master password by entering it now.\nMaster password must be at least 8 chars long, contain an upper case letter, a lower case letter, and a digit")
 		masterpassword = input()
 		validate_pw(masterpassword)
-		# need to store some form of password in logininfofile. either hash it or pbkdf2 with salt?
-		infofile = open(logininfofile, 'w')
-		infofile.write(KEY_CREATED) # + some form of masterpassword# +'\b')
-		infofile.close()
+		store_master_password(masterpassword)
+
 
 
 
@@ -63,8 +62,7 @@ if (operation == "add"):
 	inputmpw = ""
 	print("Enter master password")
 	inputmpw = input()
-	#if (inputmpw == masterpassword):
-	if (inputmpw == "something"): #some form of masterpassword#)
+	if (inputmpw == masterkey): #need to have some way of going from input master password to the correct master key
 		mode = "e"
 		password = ""
 		username = ""
@@ -72,9 +70,10 @@ if (operation == "add"):
 		print("Adding new password:")
 		print("Enter 'e' to add a password for an existing account. Enter 'n' to generate a password for a new account.")
 		mode = input()
-		if (mode != "e") and (mode != "n"):
+		while (mode != "e") and (mode != "n"):
 			print("Error! Enter e/n")
-		elif mode == "e":
+			mode = input()
+		if mode == "e":
 			print("Enter password to be encrypted")
 			password = input()
 			print("Enter username associated with password")
@@ -100,10 +99,43 @@ if (operation == "get"):
 	inputmpw = ""
 	print("Enter master password")
 	inputmpw = input()
-	if (inputmpw == masterpassword):
-		username = ""
-		print("Enter username/URL associated with password")
-		username = input()
+	if (inputmpw == masterkey):
+		mode = "url"
+		print("Enter 'url' to look up accounts by URL. Enter 'user' to look up accounts by username.")
+		mode = input()
+		while (mode != "url") and (mode != "user"):
+			print("Error! Enter url/user")
+			mode = input()
+		if mode == "url":
+			URL = ""
+			print("Enter URL associated with password")
+			URL = input()
+			matchingURL = lookup_url(URL)
+			usernamesString = ""
+			for loginInfo in matchingURL:
+				usernamesString += loginInfo.username + "  "
+			print(usernamesString)
+			print("Enter one of the above usernames to get its password")
+			desiredUsername = input()
+			for loginInfo in matchingURL:
+				if loginInfo.username == desiredUsername:
+					encrypted_password = loginInfo.password
+					return cbc_decrypt(masterkey, encrypted_password)
+		if mode == "user":
+			username = ""
+			print("Enter username associated with password")
+			username = input()
+			matchingUser = lookup_user(username)
+			URLString = ""
+			for loginInfo in matchingUser:
+				URLString += loginInfo.url + "  "
+			print(URLString)
+			print("Enter one of the above URLs to get its password")
+			desiredURL = input()
+			for loginInfo in matchingUser:
+				if loginInfo.url == desiredURL:
+					encrypted_password = loginInfo.password
+					return cbc_decrypt(masterkey, encrypted_password)
 
 
 def validate_pw(attemptedpw):
@@ -243,6 +275,18 @@ def lookup_username(username):
 			matching_login_list.append(loginInfo)
 
 	return matching_login_list
+
+def store_master_password(masterpassword):
+	#find a more secure way to do this!
+	salt = Random.get_random_bytes(8)
+	generated_key = PBKDF2(masterpassword, salt, AES.block_size, 1000)
+	h = SHA256.new()
+	h.update(generated_key)
+	key_to_store = h.digest()
+	key_to_store = key_to_store + salt
+	infofile = open(logininfofile, 'w')
+	infofile.write(KEY_CREATED + key_to_store) # + some form of masterpassword# +'\b')
+	infofile.close()
 
 
 

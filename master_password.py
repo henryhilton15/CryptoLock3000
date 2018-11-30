@@ -7,6 +7,7 @@ from Crypto.Protocol.KDF import PBKDF2
 masterpassword = ""
 operation = "create"
 logininfofile = "infofile.txt"
+KEY_CREATED = "Master key:"
 
 try:
     opts, args = getopt.getopt(sys.argv[1:],'hcag')
@@ -31,7 +32,12 @@ if (operation != "create") and (operation != "add") and (operation != "get"):
 
 if (operation == "create"):
 	# check to see if a master password has already been created
-	if (master password has already been created):
+	# if (master password has already been created):
+	infofile = open(logininfofile, 'r')
+	# if infofile.readline() contains some word that lets us know password has been created
+	firstline = infofile.readline()
+	infofile.close()
+	if (KEY_CREATED in firstline):
 		print("Error! Master password has already been created. Type 'a' to add a password or 'g' to get a password.")
 		switchoperation = ""
 		switchoperation = input()
@@ -45,6 +51,10 @@ if (operation == "create"):
 		print("Create master password by entering it now.\nMaster password must be at least 8 chars long, contain an upper case letter, a lower case letter, and a digit")
 		masterpassword = input()
 		validate_pw(masterpassword)
+		# need to store some form of password in logininfofile. either hash it or pbkdf2 with salt?
+		infofile = open(logininfofile, 'w')
+		infofile.write(KEY_CREATED + #some form of masterpassword# +'\b')
+
 
 
 if (operation == "add"):
@@ -52,7 +62,7 @@ if (operation == "add"):
 	print("Enter master password")
 	inputmpw = input()
 	#if (inputmpw == masterpassword):
-	if (inputmpw == )
+	if (inputmpw == #some form of masterpassword#)
 		mode = "e"
 		password = ""
 		username = ""

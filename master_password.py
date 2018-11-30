@@ -55,7 +55,7 @@ if (operation == "create"):
 		# need to store some form of password in logininfofile. either hash it or pbkdf2 with salt?
 		infofile = open(logininfofile, 'w')
 		infofile.write(KEY_CREATED) # + some form of masterpassword# +'\b')
-			infofile.close()
+		infofile.close()
 
 
 
@@ -232,3 +232,23 @@ def lookup_url(url):
 			matching_login_list.append(loginInfo)
 
 	return matching_login_list
+
+def main():
+	for i in range(10):
+		username = i
+		url = i % 3
+		password = 123455
+		loginInfo = loginInfo(username, url, password)
+		loginInfoObjects.append(loginInfo)
+
+	url_list = lookup_url(2)
+	print(url_list)
+
+if "__name__" == "__main__":
+	main()
+
+
+
+
+
+

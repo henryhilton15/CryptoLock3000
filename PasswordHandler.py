@@ -6,6 +6,9 @@ from PasswordHandler import *
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 
+logininfofile = "infofile.txt"
+loginInfoObjects = []
+
 class LoginInfo:
 	def __init__(self, username, url, password):
 		self.username = str(username)
@@ -164,19 +167,22 @@ def verify_inputmpw(inputmpw):
 	h.update(input_key)
 	input_key = h.digest()
 	masterkey = get_master_key()
-	if inputkey == masterkey:
-		return 1
+
+	if input_key == masterkey:
+		return True
 	else:
-		return 0
+		return False
 
 def get_salt():
-	infofile = open(logininfofile, 'r')
+	infofile = open(logininfofile, 'rb')
 	firstline = infofile.readline()
+	infofile.close()
 	salt = firstline[-16:]
 	return salt
 
 def get_master_key():
-	infofile = open(logininfofile, 'r')
+	infofile = open(logininfofile, 'rb')
 	firstline = infofile.readline()
-	masterkey = firstline[firstline.find(' ')+1:firstline.find(' ')+1+AES.block_size]
+	masterkey = firstline[firstline.find(':'.encode('utf-8'))+1:firstline.find(':'.encode('utf-8'))+1+32]
+	infofile.close()
 	return masterkey

@@ -157,5 +157,3 @@ if (operation == "get"):
 				if loginInfo.url == desiredURL:
 					encrypted_password = loginInfo.password
 					cbc_decrypt(get_master_key(), encrypted_password)
-
-

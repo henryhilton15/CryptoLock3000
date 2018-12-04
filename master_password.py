@@ -85,6 +85,7 @@ if (operation == "add"):
 	print("Enter master password")
 	inputmpw = input()
 	if verify_inputmpw(inputmpw) == 1:
+		print("here")
 		mode = "e"
 		password = ""
 		username = ""
@@ -107,7 +108,7 @@ if (operation == "add"):
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
 			infofile = open(logininfofile, 'a')
-			infofile.write("\n" + format_loginInfo(newLogin))
+			infofile.write(format_loginInfo(newLogin))
 			infofile.close()
 			print("Done")
 
@@ -122,7 +123,7 @@ if (operation == "add"):
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
 			infofile = open(logininfofile, 'a')
-			infofile.write("\n" + format_loginInfo(newLogin))
+			infofile.write(format_loginInfo(newLogin))
 			infofile.close()
 			print("Done")
 

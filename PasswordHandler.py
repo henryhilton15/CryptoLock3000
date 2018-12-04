@@ -154,6 +154,7 @@ def lookup_username(username):
 def store_master_password(masterpassword):
 	#find a more secure way to do this!
 	salt = Random.get_random_bytes(16) #changed salt from 8 to 16 bytes for more security
+	print(salt)
 	generated_key = PBKDF2(masterpassword, salt, AES.block_size, 1000)
 	h = SHA256.new()
 	h.update(generated_key)
@@ -169,6 +170,7 @@ def generate_master_key(masterpassword):
 
 def verify_inputmpw(inputmpw):
 	salt = get_salt()
+	print(salt)
 	input_key = PBKDF2(inputmpw, salt, AES.block_size, 1000)
 	h = SHA256.new()
 	h.update(input_key)

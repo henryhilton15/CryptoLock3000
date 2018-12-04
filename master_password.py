@@ -106,9 +106,9 @@ if (operation == "add"):
 			masterkey = generate_master_key(inputmpw)
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
-			infofile = open(logininfofile, 'a')
-			infofile.write(format_loginInfo(newLogin) + "\n")
-			infofile.close()
+
+			update_login_file(newLogin)
+
 			print("Done")
 
 		elif mode == "n":
@@ -118,12 +118,13 @@ if (operation == "add"):
 			URL = input()
 			password = random_pw_gen()
 			print("Password generated.")
+
 			masterkey = generate_master_key(inputmpw)
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
-			infofile = open(logininfofile, 'a')
-			infofile.write(format_loginInfo(newLogin))
-			infofile.close()
+
+			update_login_file(newLogin)
+
 	else:
 		print("Too many incorrect guesses!")
 

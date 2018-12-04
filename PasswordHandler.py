@@ -47,10 +47,10 @@ def random_pw_gen():
 	return randompw
 
 
-SEPARATOR = "|||"
+SEPARATOR = b"|||"
 
 def format_loginInfo(loginInfo):
-	return loginInfo.username + SEPARATOR + loginInfo.url + SEPARATOR + loginInfo.password
+	return loginInfo.username.encode('utf-8') + SEPARATOR + loginInfo.url.encode('utf-8') + SEPARATOR + loginInfo.password.encode('utf-8')
 
 def parse_line(entry):
 	first_sep = entry.find(SEPARATOR, 0, len(entry) - 1)
@@ -63,16 +63,28 @@ def parse_line(entry):
 
 
 def init_login_objects():
-	for line in logininfofile:
+
+	loginInfoFile = open(logininfofile, 'rb')
+	loginInfoFile.readline()
+	for line in loginInfoFile:
 		loginInfo = parse_line(line)
 		loginInfoObjects.append(loginInfo)
+		print("Retrieved password: ")
+		print(loginInfo.password)
+		print("Retrieved username: ")
+		print(loginInfo.username)
 
-def update_login_file():
-	ofile = open(loginInfoFile, "w")
-	for loginInfo in loginInfoObjects:
-		line = format_loginInfo(loginInfo)
-		ofile.write(line)
-	ofile.close()
+def update_login_file(newLogin):
+	loginInfoObjects.append(newLogin)
+
+	print("Password stored:")
+	print(newLogin.password)
+	print("Username stored:")
+	print(newLogin.username)
+
+	infofile = open(logininfofile, 'ab')
+	infofile.write(format_loginInfo(newLogin) + b"\n")
+	infofile.close()
 
 
 def cbc_encrypt(key, password):    
@@ -169,7 +181,6 @@ def generate_master_key(masterpassword):
 
 def verify_inputmpw(inputmpw):
 	salt = get_salt()
-	print(salt)
 	input_key = PBKDF2(inputmpw, salt, AES.block_size, 1000)
 	h = SHA256.new()
 	h.update(input_key)

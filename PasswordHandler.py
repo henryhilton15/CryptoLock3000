@@ -5,6 +5,7 @@ from Crypto import Random
 from PasswordHandler import *
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
+from Crypto.Util import Padding
 
 logininfofile = "infofile.txt"
 loginInfoObjects = []
@@ -46,10 +47,10 @@ def random_pw_gen():
 	return randompw
 
 
-SEPARATOR = "|||"
+SEPARATOR = b"|||"
 
 def format_loginInfo(loginInfo):
-	return loginInfo.username + SEPARATOR + loginInfo.url + SEPARATOR + loginInfo.password
+	return loginInfo.username.encode('utf-8') + SEPARATOR + loginInfo.url.encode('utf-8') + SEPARATOR + loginInfo.password.encode('utf-8')
 
 def parse_line(entry):
 	first_sep = entry.find(SEPARATOR, 0, len(entry) - 1)
@@ -62,22 +63,35 @@ def parse_line(entry):
 
 
 def init_login_objects():
+
+	loginInfoFile = open(logininfofile, 'rb')
+	loginInfoFile.readline()
 	for line in loginInfoFile:
 		loginInfo = parse_line(line)
 		loginInfoObjects.append(loginInfo)
+		print("Retrieved password: ")
+		print(loginInfo.password)
+		print("Retrieved username: ")
+		print(loginInfo.username)
 
-def update_login_file():
-	ofile = open(loginInfoFile, "w")
-	for loginInfo in loginInfoObjects:
-		line = format_loginInfo(loginInfo)
-		ofile.write(line)
-	ofile.close()
+def update_login_file(newLogin):
+	loginInfoObjects.append(newLogin)
+
+	print("Password stored:")
+	print(newLogin.password)
+	print("Username stored:")
+	print(newLogin.username)
+
+	infofile = open(logininfofile, 'ab')
+	infofile.write(format_loginInfo(newLogin) + b"\n")
+	infofile.close()
 
 
-def cbc_encrypt(keystring, password):    
+def cbc_encrypt(key, password):    
 
-    if len(keystring) != 16:
-        print('Error: Keystring must be 16 bytes')
+    if len(key) != 16:
+        print('Error: Key must be 16 bytes')
+        sys.exit(2)
 
     if len(password) == 0:
         print('Error: Password is missing.')
@@ -85,7 +99,7 @@ def cbc_encrypt(keystring, password):
 
     # generate a random IV and encrypt it in ECB mode
     iv = Random.get_random_bytes(AES.block_size)
-    key = keystring.encode('utf-8')
+    #key = keystring.encode('utf-8')
     cipher_ECB = AES.new(key, AES.MODE_ECB)
     enc_iv = cipher_ECB.encrypt(iv)
 
@@ -103,10 +117,10 @@ def cbc_encrypt(keystring, password):
     return encrypted
 
 
-def cbc_decrypt(keystring, encrypted):
+def cbc_decrypt(key, encrypted):
     
-    if len(keystring) == 0:
-        print('Error: Enter keystring')
+    if len(key) == 0:
+        print('Error: Enter key')
         sys.exit(2)
 
     if len(encrypted) == 0:
@@ -118,7 +132,7 @@ def cbc_decrypt(keystring, encrypted):
     encrypted_password = encrypted[AES.block_size:]
 	
     # decrypt iv using AES_ECB
-    key = keystring.encode('utf-8')
+    #key = keystring.encode('utf-8')
     cipher_ECB = AES.new(key, AES.MODE_ECB)
     iv = cipher_ECB.decrypt(enc_iv)
 
@@ -151,7 +165,7 @@ def lookup_username(username):
 
 def store_master_password(masterpassword):
 	#find a more secure way to do this!
-	salt = Random.get_random_bytes(16) #changed salt from 8 to 16 bytes for more security
+	salt = Random.get_random_bytes(16)
 	generated_key = PBKDF2(masterpassword, salt, AES.block_size, 1000)
 	h = SHA256.new()
 	h.update(generated_key)
@@ -159,16 +173,21 @@ def store_master_password(masterpassword):
 	key_to_store = key_to_store + salt
 	return key_to_store
 
+def generate_master_key(masterpassword):
+	salt = get_salt()
+	masterkey = PBKDF2(masterpassword, salt, AES.block_size, 1000)
+	return masterkey
+
 
 def verify_inputmpw(inputmpw):
 	salt = get_salt()
 	input_key = PBKDF2(inputmpw, salt, AES.block_size, 1000)
 	h = SHA256.new()
 	h.update(input_key)
-	input_key = h.digest()
-	masterkey = get_master_key()
+	input_key_hash = h.digest()
+	masterkey_hash = get_master_key_hash()
 
-	if input_key == masterkey:
+	if input_key_hash == masterkey_hash:
 		return True
 	else:
 		return False
@@ -177,12 +196,12 @@ def get_salt():
 	infofile = open(logininfofile, 'rb')
 	firstline = infofile.readline()
 	infofile.close()
-	salt = firstline[-16:]
+	salt = firstline[-17:-1]
 	return salt
 
-def get_master_key():
+def get_master_key_hash():
 	infofile = open(logininfofile, 'rb')
 	firstline = infofile.readline()
-	masterkey = firstline[firstline.find(':'.encode('utf-8'))+1:firstline.find(':'.encode('utf-8'))+1+32]
+	masterkey_hash = firstline[firstline.find(':'.encode('utf-8'))+1:firstline.find(':'.encode('utf-8'))+1+32]
 	infofile.close()
-	return masterkey
+	return masterkey_hash

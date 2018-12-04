@@ -63,7 +63,7 @@ def parse_line(entry):
 
 
 def init_login_objects():
-	for line in loginInfoFile:
+	for line in logininfofile:
 		loginInfo = parse_line(line)
 		loginInfoObjects.append(loginInfo)
 

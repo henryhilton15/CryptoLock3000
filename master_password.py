@@ -11,6 +11,7 @@ logininfofile = "infofile.txt"
 KEY_CREATED = "Hash of master key:"
 loginInfoObjects = []
 
+init_login_objects()
 
 try:
     opts, args = getopt.getopt(sys.argv[1:],'hcag')
@@ -49,7 +50,7 @@ if (operation == "create"):
 	#print(firstline)
 
 	if (KEY_CREATED.encode('utf-8') in firstline):
-		print("Error! Master password has already been created. Type 'a' to add a password or 'g' to get a password.")
+		print("Master password has already been created. Type 'a' to add a password or 'g' to get a password.")
 		switchoperation = ""
 		switchoperation = input()
 		while (switchoperation != "a") and (switchoperation != "g"):
@@ -75,8 +76,13 @@ if (operation == "create"):
 
 if (operation == "add"):
 	inputmpw = ""
-	print("Enter master password")
+	print("Enter master password.")
 	inputmpw = input()
+	login_attempts = 1
+	while(verify_inputmpw(inputmpw) != 1 and login_attempts < 5):
+		print("Incorrect master password entered. Try again.")
+		inputmpw = input()
+		login_attempts += 1
 	if verify_inputmpw(inputmpw) == 1:
 		print("here")
 		mode = "e"
@@ -119,20 +125,25 @@ if (operation == "add"):
 			infofile.write(format_loginInfo(newLogin))
 			infofile.close()
 	else:
-		print("Incorrect master password entered")
+		print("Too many incorrect guesses!")
 
 
 
 if (operation == "get"):
 	inputmpw = ""
-	print("Enter master password")
+	print("Enter master password.")
 	inputmpw = input()
-	if (verify_inputmpw(inputmpw)):
+	login_attempts = 1
+	while(verify_inputmpw(inputmpw) != 1 and login_attempts < 5):
+		print("Incorrect master password entered. Try again.")
+		inputmpw = input()
+		login_attempts += 1
+	if verify_inputmpw(inputmpw) == 1:
 		mode = "url"
 		print("Enter 'url' to look up accounts by URL. Enter 'user' to look up accounts by username.")
 		mode = input()
 		while (mode != "url") and (mode != "user"):
-			print("Error! Enter url/user")
+			print("Enter url/user")
 			mode = input()
 		if mode == "url":
 			URL = ""
@@ -168,5 +179,7 @@ if (operation == "get"):
 					masterkey = generate_master_key(inputmpw)
 					cbc_decrypt(masterkey, encrypted_password)
 					masterkey = None
+	else:
+		print("Too many incorrect guesses!")
 
 

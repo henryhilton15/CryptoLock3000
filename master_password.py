@@ -6,9 +6,9 @@ from PasswordHandler import *
 #First decision is whether the user is creating a master password, adding a new password, or getting a password
 
 masterpassword = ""
-operation = "create"
-logininfofile = "infofile.bin"
-KEY_CREATED = "Hash of master key: "
+operation = "get"
+logininfofile = "infofile.txt"
+KEY_CREATED = "Hash of master key:"
 loginInfoObjects = []
 
 
@@ -34,7 +34,6 @@ if (operation != "create") and (operation != "add") and (operation != "get"):
     sys.exit(2)
 
 if (operation == "create"):
-
 	# check to see if a master password has already been created
 	# if (master password has already been created):
 	try:
@@ -45,6 +44,7 @@ if (operation == "create"):
 	except FileNotFoundError:
 		infofile = open(logininfofile, 'wb')
 		infofile.close()
+		firstline = "".encode('utf-8')
 
 	#print(firstline)
 
@@ -54,6 +54,7 @@ if (operation == "create"):
 		switchoperation = input()
 		while (switchoperation != "a") and (switchoperation != "g"):
 			print("Error! Choose to add or get a password (a/g)")
+			switchoperation = input()
 		if switchoperation == "a":
 			operation = "add"
 		if switchoperation == "g":
@@ -71,8 +72,7 @@ if (operation == "create"):
 		# as of now, store_master_password writes hashed master key and salt in first line together
 		key_to_store = store_master_password(masterpassword)
 		infofile = open(logininfofile, 'wb')
-		infofile.write(KEY_CREATED.encode('utf-8'))
-		infofile.write(key_to_store) # + some form of masterpassword# +'\b')
+		infofile.write(KEY_CREATED.encode('utf-8') + key_to_store)
 		infofile.close()
 
 
@@ -120,7 +120,7 @@ if (operation == "get"):
 	inputmpw = ""
 	print("Enter master password")
 	inputmpw = input()
-	if (inputmpw == masterkey):
+	if (verify_inputmpw(inputmpw)):
 		mode = "url"
 		print("Enter 'url' to look up accounts by URL. Enter 'user' to look up accounts by username.")
 		mode = input()

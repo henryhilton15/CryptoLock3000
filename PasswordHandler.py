@@ -185,6 +185,8 @@ def get_salt():
 	firstline = infofile.readline()
 	infofile.close()
 	salt = firstline[-16:]
+	print("Salt:")
+	print(salt) #only for testing, remove this line later
 	return salt
 
 def get_master_key_hash():

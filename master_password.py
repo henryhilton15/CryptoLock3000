@@ -124,7 +124,8 @@ if (operation == "add"):
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
 			infofile = open(logininfofile, 'a')
-			infofile.write("\n" + format_loginInfo(newLogin))
+			#infofile.write("\n" + format_loginInfo(newLogin))
+			infofile.write(format_loginInfo(newLogin))
 			infofile.close()
 	else:
 		print("Incorrect master password entered")

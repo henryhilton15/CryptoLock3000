@@ -52,6 +52,7 @@ if (operation == "create"):
 	else:
 		print("Create master password by entering it now.\nMaster password must be at least 8 chars long, contain an upper case letter, a lower case letter, and a digit")
 		masterpassword = input()
+		
 		validate_pw(masterpassword)
 		# create a random salt
 

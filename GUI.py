@@ -1,7 +1,6 @@
 from tkinter import *
 import tkinter.messagebox as tm
 
-
 class LoginFrame(Frame):
     def __init__(self, master):
         super().__init__(master)
@@ -22,38 +21,67 @@ class LoginFrame(Frame):
         self.entry_password.grid(row=2, column=1)
 
         self.generate_password_btn = Button(self, text="Generate Password", command=self._generate_password_btn_clicked)
-        self.generate_password_btn.grid(row=3, sticky=E)
+        self.generate_password_btn.grid(row=3, column=0)
 
         self.retrieve_password_btn = Button(self, text="Retrieve Password", command=self._retrieve_password_btn_clicked)
         self.retrieve_password_btn.grid(row=3, column=1)
 
+        self.new_master_btn = Button(self, text="Create a new Master Password?", command=self._new_master_btn_clicked)
+        self.new_master_btn.grid(row=4, columnspan = 2)
+
         self.pack()
 
     def _generate_password_btn_clicked(self):
-        # print("Clicked")
+
         username = self.entry_username.get()
         url = self.entry_username.get()
         masterPassword = self.entry_password.get()
 
-        #print(username, password)4
+        # LAUNCH CODE FOR GENERATE PASSWORD
 
-        if username == "" and url == "" and masterPassword == "":
-            tm.showinfo("Login info", "Welcome Gabor, you are looking very wealthy today!!")
-        else:
-            tm.showerror("Password Fetch Error", "Incorrect Credentials")
+        masterPassword = None
 
     def _retrieve_password_btn_clicked(self):
-        # print("Clicked")
+
         username = self.entry_username.get()
         url = self.entry_username.get()
         masterPassword = self.entry_password.get()
 
-        #print(username, password)4
+        # LAUNCH CODE FOR RETRIEVE PASSWORD
 
-        if username == "" and url == "" and masterPassword == "":
-            tm.showinfo("Login info", "Welcome Gabor, you are looking very wealthy today!!")
-        else:
-            tm.showerror("Password Fetch Error", "Incorrect Credentials")
+        masterPassword = None
+
+    def _set_master_password(newMaster):
+        print(newMaster)
+        # NEED TO LAUNCH PASSWORD CHANGE FROM HERE
+        newMaster = None
+
+    def _reset_password_btn_clicked(top, newMaster):
+        _set_master_password(newMaster)
+        top.destroy()
+
+    def _new_master_btn_clicked(self):
+
+        top = Toplevel()
+
+        label_instructions = Label(top, text="If creating a Master Password for the first time, leave the 'Current Password' field blank")
+        label_instructions.grid(row=0, columnspan=2)
+
+        label_old = Label(top, text="Current Master Password")
+        label_old.grid(row=1, sticky=E)
+
+        label_new = Label(top, text="New Master Password")
+        label_new.grid(row=2, sticky=E)
+
+        entry_old = Entry(top, show="*")
+        entry_old.grid(row=1, column=1)
+
+        entry_new = Entry(top, show="*")
+        entry_new.grid(row=2, column=1)
+
+        submit_button = Button(top, text="Submit", command=top.destroy) ## PASS newMaster here
+        submit_button.grid(row=3, columnspan=2)
+        top.pack()
 
 root = Tk()
 lf = LoginFrame(root)

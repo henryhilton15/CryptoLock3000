@@ -61,8 +61,10 @@ if (operation == "create"):
 			operation = "get"
 	else:
 		print("Create master password by entering it now.\nMaster password must be at least 8 chars long, contain an upper case letter, a lower case letter, and a digit")
+
 		#masterpassword = input()
 		masterpassword = validate_pw()
+
 		# create a random salt
 
 		# generate master key using PBKDF2 with masterpassword and salt
@@ -125,7 +127,9 @@ if (operation == "add"):
 			infofile = open(logininfofile, 'a')
 			infofile.write(format_loginInfo(newLogin))
 			infofile.close()
-			print("Done")
+	else:
+		print("Incorrect master password entered")
+
 
 
 if (operation == "get"):

@@ -5,6 +5,7 @@ from Crypto import Random
 from PasswordHandler import *
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
+from Crypto.Util import Padding
 
 logininfofile = "infofile.txt"
 loginInfoObjects = []
@@ -74,9 +75,9 @@ def update_login_file():
 	ofile.close()
 
 
-def cbc_encrypt(keystring, password):    
+def cbc_encrypt(key, password):    
 
-    if len(keystring) != 16:
+    if len(key) != 16:
         print('Error: Keystring must be 16 bytes')
 
     if len(password) == 0:
@@ -85,7 +86,7 @@ def cbc_encrypt(keystring, password):
 
     # generate a random IV and encrypt it in ECB mode
     iv = Random.get_random_bytes(AES.block_size)
-    key = keystring.encode('utf-8')
+    #key = keystring.encode('utf-8')
     cipher_ECB = AES.new(key, AES.MODE_ECB)
     enc_iv = cipher_ECB.encrypt(iv)
 

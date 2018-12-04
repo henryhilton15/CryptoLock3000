@@ -101,10 +101,11 @@ if (operation == "add"):
 			username = input()
 			print("Enter URL associated with password")
 			URL = input()
-			newLogin = (username, URL, cbc_encrypt(get_master_key(), password))
+			newLogin = LoginInfo(username, URL, cbc_encrypt(get_master_key(), password))
 			infofile = open(logininfofile, 'w')
 			infofile.write("\n" + format_loginInfo(newLogin))
 			infofile.close()
+			print("Password added.")
 		elif mode == "n":
 			print("Enter username")
 			username = input()
@@ -116,6 +117,8 @@ if (operation == "add"):
 			infofile = open(logininfofile, 'w')
 			infofile.write("\n" + format_loginInfo(newLogin))
 			infofile.close()
+	else:
+		print("Incorrect master password entered")
 
 
 if (operation == "get"):

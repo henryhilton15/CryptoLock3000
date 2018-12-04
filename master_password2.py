@@ -7,9 +7,10 @@ from PasswordHandler import *
 
 masterpassword = ""
 operation = "create"
-logininfofile = "infofile.txt"
+logininfofile = "infofile.bin"
 KEY_CREATED = "Hash of master key: "
 loginInfoObjects = []
+
 
 try:
     opts, args = getopt.getopt(sys.argv[1:],'hcag')
@@ -33,13 +34,21 @@ if (operation != "create") and (operation != "add") and (operation != "get"):
     sys.exit(2)
 
 if (operation == "create"):
+
 	# check to see if a master password has already been created
 	# if (master password has already been created):
-	infofile = open(logininfofile, 'r')
+	try:
+		infofile = open(logininfofile, 'rb')
 	# if infofile.readline() contains some word that lets us know password has been created
-	firstline = infofile.readline()
-	infofile.close()
-	if (KEY_CREATED in firstline):
+		firstline = infofile.readline()
+		infofile.close()
+	except FileNotFoundError:
+		infofile = open(logininfofile, 'wb')
+		infofile.close()
+
+	#print(firstline)
+
+	if (KEY_CREATED.encode('utf-8') in firstline):
 		print("Error! Master password has already been created. Type 'a' to add a password or 'g' to get a password.")
 		switchoperation = ""
 		switchoperation = input()
@@ -51,8 +60,8 @@ if (operation == "create"):
 			operation = "get"
 	else:
 		print("Create master password by entering it now.\nMaster password must be at least 8 chars long, contain an upper case letter, a lower case letter, and a digit")
-		masterpassword = input()
-		validate_pw(masterpassword)
+		#masterpassword = input()
+		masterpassword = validate_pw()
 		# create a random salt
 
 		# generate master key using PBKDF2 with masterpassword and salt
@@ -60,7 +69,11 @@ if (operation == "create"):
 		# store the hash of the master key in the first line of the file
 		# store the salt (unencrypted) in the second line of the file
 		# as of now, store_master_password writes hashed master key and salt in first line together
-		store_master_password(masterpassword)
+		key_to_store = store_master_password(masterpassword)
+		infofile = open(logininfofile, 'wb')
+		infofile.write(KEY_CREATED.encode('utf-8'))
+		infofile.write(key_to_store) # + some form of masterpassword# +'\b')
+		infofile.close()
 
 
 

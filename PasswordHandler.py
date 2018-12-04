@@ -1,4 +1,10 @@
-
+import sys, getopt
+import random
+from Crypto.Protocol.KDF import PBKDF2
+from Crypto import Random
+from PasswordHandler import *
+from Crypto.Cipher import AES
+from Crypto.Hash import SHA256
 
 class LoginInfo:
 	def __init__(self, username, url, password):
@@ -10,10 +16,10 @@ class LoginInfo:
 		return "Username: " + self.username + " | URL: " + self.url
 
 
-def validate_pw(attemptedpw):
+def validate_pw():
 	pwvalid = 0
-	while pwvalid == 0:
-		attemptedpw = input()
+	while pwvalid == 0:	
+		attemptedpw = input()	
 		if (len(attemptedpw) >= 8) and (any(x.isupper() for x in attemptedpw)) and (any(x.islower() for x in attemptedpw)) and any(x.isdigit() for x in attemptedpw):
 			pwvalid = 1
 		else:
@@ -25,8 +31,9 @@ def validate_pw(attemptedpw):
 				print("Error! Password must contain a lower case letter.")
 			if not any(x.isdigit() for x in attemptedpw):
 				print("Error! Password must contain a digit.")
-	if pwvalid:
+	if pwvalid == 1:
 		print("Master password created")
+		return attemptedpw
 
 
 def random_pw_gen():
@@ -147,9 +154,8 @@ def store_master_password(masterpassword):
 	h.update(generated_key)
 	key_to_store = h.digest()
 	key_to_store = key_to_store + salt
-	infofile = open(logininfofile, 'w')
-	infofile.write(KEY_CREATED + key_to_store) # + some form of masterpassword# +'\b')
-	infofile.close()
+	return key_to_store
+
 
 def verify_inputmpw(inputmpw):
 	salt = get_salt()

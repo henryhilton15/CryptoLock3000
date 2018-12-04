@@ -78,7 +78,8 @@ def update_login_file():
 def cbc_encrypt(key, password):    
 
     if len(key) != 16:
-        print('Error: Keystring must be 16 bytes')
+        print('Error: Key must be 16 bytes')
+        sys.exit(2)
 
     if len(password) == 0:
         print('Error: Password is missing.')
@@ -104,10 +105,10 @@ def cbc_encrypt(key, password):
     return encrypted
 
 
-def cbc_decrypt(keystring, encrypted):
+def cbc_decrypt(key, encrypted):
     
-    if len(keystring) == 0:
-        print('Error: Enter keystring')
+    if len(key) == 0:
+        print('Error: Enter key')
         sys.exit(2)
 
     if len(encrypted) == 0:
@@ -119,7 +120,7 @@ def cbc_decrypt(keystring, encrypted):
     encrypted_password = encrypted[AES.block_size:]
 	
     # decrypt iv using AES_ECB
-    key = keystring.encode('utf-8')
+    #key = keystring.encode('utf-8')
     cipher_ECB = AES.new(key, AES.MODE_ECB)
     iv = cipher_ECB.decrypt(enc_iv)
 
@@ -160,16 +161,21 @@ def store_master_password(masterpassword):
 	key_to_store = key_to_store + salt
 	return key_to_store
 
+def generate_master_key(masterpassword):
+	salt = get_salt()
+	masterkey = PBKDF2(masterpassword, salt, AES.block_size, 1000)
+	return masterkey
+
 
 def verify_inputmpw(inputmpw):
 	salt = get_salt()
 	input_key = PBKDF2(inputmpw, salt, AES.block_size, 1000)
 	h = SHA256.new()
 	h.update(input_key)
-	input_key = h.digest()
-	masterkey = get_master_key()
+	input_key_hash = h.digest()
+	masterkey_hash = get_master_key_hash()
 
-	if input_key == masterkey:
+	if input_key_hash == masterkey_hash:
 		return True
 	else:
 		return False
@@ -181,9 +187,9 @@ def get_salt():
 	salt = firstline[-16:]
 	return salt
 
-def get_master_key():
+def get_master_key_hash():
 	infofile = open(logininfofile, 'rb')
 	firstline = infofile.readline()
-	masterkey = firstline[firstline.find(':'.encode('utf-8'))+1:firstline.find(':'.encode('utf-8'))+1+32]
+	masterkey_hash = firstline[firstline.find(':'.encode('utf-8'))+1:firstline.find(':'.encode('utf-8'))+1+32]
 	infofile.close()
-	return masterkey
+	return masterkey_hash

@@ -3,10 +3,10 @@ import random
 from Crypto.Protocol.KDF import PBKDF2
 from PasswordHandler import *
 
+
 #First decision is whether the user is creating a master password, adding a new password, or getting a password
 
-masterpassword = ""
-operation = "get"
+operation = "create"
 logininfofile = "infofile.txt"
 KEY_CREATED = "Hash of master key:"
 loginInfoObjects = []
@@ -73,9 +73,12 @@ if (operation == "create"):
 		# store the salt (unencrypted) in the second line of the file
 		# as of now, store_master_password writes hashed master key and salt in first line together
 		key_to_store = store_master_password(masterpassword)
+		masterpassword = None
+
 		infofile = open(logininfofile, 'wb')
 		infofile.write(KEY_CREATED.encode('utf-8') + key_to_store)
 		infofile.close()
+		key_to_store = None
 
 
 
@@ -101,11 +104,15 @@ if (operation == "add"):
 			username = input()
 			print("Enter URL associated with password")
 			URL = input()
-			newLogin = LoginInfo(username, URL, cbc_encrypt(get_master_key(), password))
-			infofile = open(logininfofile, 'w')
+
+			masterkey = generate_master_key(inputmpw)
+			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
+			masterkey = None
+			infofile = open(logininfofile, 'a')
 			infofile.write("\n" + format_loginInfo(newLogin))
 			infofile.close()
-			print("Password added.")
+			print("Done")
+
 		elif mode == "n":
 			print("Enter username")
 			username = input()
@@ -113,12 +120,15 @@ if (operation == "add"):
 			URL = input()
 			password = random_pw_gen()
 			print("Password generated.")
-			newLogin = (username, URL, cbc_encrypt(masterkey, password))
-			infofile = open(logininfofile, 'w')
+			masterkey = generate_master_key(inputmpw)
+			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
+			masterkey = None
+			infofile = open(logininfofile, 'a')
 			infofile.write("\n" + format_loginInfo(newLogin))
 			infofile.close()
 	else:
 		print("Incorrect master password entered")
+
 
 
 if (operation == "get"):
@@ -146,7 +156,9 @@ if (operation == "get"):
 			for loginInfo in matchingURL:
 				if loginInfo.username == desiredUsername:
 					encrypted_password = loginInfo.password
-					cbc_decrypt(get_master_key(), encrypted_password)
+					masterkey = generate_master_key(inputmpw)
+					cbc_decrypt(masterkey, encrypted_password)
+					masterkey = None
 		if mode == "user":
 			username = ""
 			print("Enter username associated with password")
@@ -161,6 +173,8 @@ if (operation == "get"):
 			for loginInfo in matchingUser:
 				if loginInfo.url == desiredURL:
 					encrypted_password = loginInfo.password
-					cbc_decrypt(get_master_key(), encrypted_password)
+					masterkey = generate_master_key(inputmpw)
+					cbc_decrypt(masterkey, encrypted_password)
+					masterkey = None
 
 

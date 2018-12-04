@@ -6,10 +6,11 @@ from PasswordHandler import *
 #First decision is whether the user is creating a master password, adding a new password, or getting a password
 
 masterpassword = ""
-operation = "create"
+operation = "get"
 logininfofile = "infofile.txt"
-KEY_CREATED = "Hash of master key: "
+KEY_CREATED = "Hash of master key:"
 loginInfoObjects = []
+
 
 try:
     opts, args = getopt.getopt(sys.argv[1:],'hcag')
@@ -35,25 +36,35 @@ if (operation != "create") and (operation != "add") and (operation != "get"):
 if (operation == "create"):
 	# check to see if a master password has already been created
 	# if (master password has already been created):
-	infofile = open(logininfofile, 'r')
+	try:
+		infofile = open(logininfofile, 'rb')
 	# if infofile.readline() contains some word that lets us know password has been created
-	firstline = infofile.readline()
-	infofile.close()
-	if (KEY_CREATED in firstline):
+		firstline = infofile.readline()
+		infofile.close()
+	except FileNotFoundError:
+		infofile = open(logininfofile, 'wb')
+		infofile.close()
+		firstline = "".encode('utf-8')
+
+	#print(firstline)
+
+	if (KEY_CREATED.encode('utf-8') in firstline):
 		print("Error! Master password has already been created. Type 'a' to add a password or 'g' to get a password.")
 		switchoperation = ""
 		switchoperation = input()
 		while (switchoperation != "a") and (switchoperation != "g"):
 			print("Error! Choose to add or get a password (a/g)")
+			switchoperation = input()
 		if switchoperation == "a":
 			operation = "add"
 		if switchoperation == "g":
 			operation = "get"
 	else:
 		print("Create master password by entering it now.\nMaster password must be at least 8 chars long, contain an upper case letter, a lower case letter, and a digit")
-		masterpassword = input()
-		
-		validate_pw(masterpassword)
+
+		#masterpassword = input()
+		masterpassword = validate_pw()
+
 		# create a random salt
 
 		# generate master key using PBKDF2 with masterpassword and salt
@@ -61,7 +72,10 @@ if (operation == "create"):
 		# store the hash of the master key in the first line of the file
 		# store the salt (unencrypted) in the second line of the file
 		# as of now, store_master_password writes hashed master key and salt in first line together
-		store_master_password(masterpassword)
+		key_to_store = store_master_password(masterpassword)
+		infofile = open(logininfofile, 'wb')
+		infofile.write(KEY_CREATED.encode('utf-8') + key_to_store)
+		infofile.close()
 
 
 
@@ -108,7 +122,7 @@ if (operation == "get"):
 	inputmpw = ""
 	print("Enter master password")
 	inputmpw = input()
-	if (inputmpw == masterkey):
+	if (verify_inputmpw(inputmpw)):
 		mode = "url"
 		print("Enter 'url' to look up accounts by URL. Enter 'user' to look up accounts by username.")
 		mode = input()

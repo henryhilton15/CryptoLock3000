@@ -62,21 +62,12 @@ if (operation == "create"):
 	else:
 		print("Create master password by entering it now.\nMaster password must be at least 8 chars long, contain an upper case letter, a lower case letter, and a digit")
 
-		#masterpassword = input()
 		masterpassword = validate_pw()
-
-		# create a random salt
-
-		# generate master key using PBKDF2 with masterpassword and salt
-
-		# store the hash of the master key in the first line of the file
-		# store the salt (unencrypted) in the second line of the file
-		# as of now, store_master_password writes hashed master key and salt in first line together
 		key_to_store = store_master_password(masterpassword)
 		masterpassword = None
 
 		infofile = open(logininfofile, 'wb')
-		infofile.write(KEY_CREATED.encode('utf-8') + key_to_store)
+		infofile.write(KEY_CREATED.encode('utf-8') + key_to_store + "\n".encode('utf-8'))
 		infofile.close()
 		key_to_store = None
 
@@ -87,6 +78,7 @@ if (operation == "add"):
 	print("Enter master password")
 	inputmpw = input()
 	if verify_inputmpw(inputmpw) == 1:
+		print("here")
 		mode = "e"
 		password = ""
 		username = ""
@@ -109,7 +101,7 @@ if (operation == "add"):
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
 			infofile = open(logininfofile, 'a')
-			infofile.write("\n" + format_loginInfo(newLogin))
+			infofile.write(format_loginInfo(newLogin) + "\n")
 			infofile.close()
 			print("Done")
 
@@ -124,7 +116,6 @@ if (operation == "add"):
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
 			infofile = open(logininfofile, 'a')
-			#infofile.write("\n" + format_loginInfo(newLogin))
 			infofile.write(format_loginInfo(newLogin))
 			infofile.close()
 	else:

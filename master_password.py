@@ -1,5 +1,6 @@
 import sys, getopt
 import random
+from Crypto import Random #remove later
 from Crypto.Protocol.KDF import PBKDF2
 from PasswordHandler import *
 

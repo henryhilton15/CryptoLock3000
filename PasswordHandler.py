@@ -14,7 +14,8 @@ class LoginInfo:
 	def __init__(self, username, url, password):
 		self.username = str(username)
 		self.url = str(url)
-		self.password = str(password)
+		#self.password = str(password)
+		self.password = password
 
 	def toString():
 		return "Username: " + self.username + " | URL: " + self.url
@@ -129,9 +130,9 @@ def cbc_decrypt(key, encrypted):
 
 
     enc_iv = encrypted[:AES.block_size]
-    print(enc_iv.encode('utf-8')) #remove later
-    print("Is enc_iv.encode('utf-8') (above) a string?") #remove later
-    print(isinstance(enc_iv.encode('utf-8'), str)) #remove later
+    #print(enc_iv.encode('utf-8')) #remove later
+    #print("Is enc_iv.encode('utf-8') (above) a string?") #remove later
+    #print(isinstance(enc_iv.encode('utf-8'), str)) #remove later
     #print(enc_iv) #remove later
     #print("Is enc_iv (above) a string?") #remove later
     #print(isinstance(enc_iv, str)) #remove later

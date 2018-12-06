@@ -1,4 +1,5 @@
 import pyperclip
+import random
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto import Random
 from Crypto.Cipher import AES

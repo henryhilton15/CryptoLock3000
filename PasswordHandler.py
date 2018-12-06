@@ -159,16 +159,7 @@ def cbc_decrypt(key, encrypted):
 	
     return password
 
-
 def lookup_url(url):
-	matching_login_list = []
-	for loginInfo in loginInfoObjects:
-		if loginInfo.url == url:
-			matching_login_list.append(loginInfo)
-
-	return matching_login_list
-
-def lookup_url2(url):
 	matching_url_list = []
 	userString = ""
 	for loginInfo in loginInfoObjects:
@@ -180,37 +171,13 @@ def lookup_url2(url):
 
 
 def lookup_username(username):
-	matching_login_list = []
-	for loginInfo in loginInfoObjects:
-		if loginInfo.username == username:
-			matching_login_list.append(loginInfo)
-
-	return matching_login_list
-
-def lookup_username2(username):
-	#print("Input username is string?")
-	#print(isinstance(username, str))
-	#print("Input username encoded is string?")
-	#print(isinstance(username.encode('utf-8'), str))
-	#print (username.encode('utf-8')) # remove later
 	matching_user_list = []
 	URLString = ""
-	#userString = ""
 	for loginInfo in loginInfoObjects:
-		#print (loginInfo.username[2:-1]) #remove later
-		#print ("Above is string?")
-		#print(isinstance(loginInfo.username, str))
-		#if loginInfo.username.decode('utf-8') == username:
-		#if loginInfo.username.encode('utf-8') == username:
-		#if loginInfo.username.encode('utf-8') == username.encode('utf-8'):
-		#if loginInfo.username == username.encode('utf-8'): #PROBLEM is here. LHS byte string is never equal to RHS byte string
 		if loginInfo.username[2:-1] == username: #for some reason the fields of loginInfo objects are being treated as strings in the format b'string' where the b and ' ' are part of the string
-		#if loginInfo.username.equal(username.encode('utf-8')):
 			matching_user_list.append(loginInfo)
 			URLString += loginInfo.url[2:-1] + "  "
-		#userString += loginInfo.username + "  "
 	print (URLString)
-	#print(userString)
 
 	return matching_user_list
 

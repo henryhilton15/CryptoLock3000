@@ -1,6 +1,5 @@
 import sys, getopt
 import random
-from Crypto import Random #remove later
 from Crypto.Protocol.KDF import PBKDF2
 from PasswordHandler import *
 
@@ -154,7 +153,7 @@ if (operation == "get"):
 			URL = ""
 			print("Enter URL associated with password")
 			URL = input()
-			matchingURL = lookup_url2(URL)
+			matchingURL = lookup_url(URL)
 			print("Enter one of the above usernames to get its password")
 			desiredUser = input()
 			for loginInfo in matchingURL:
@@ -169,7 +168,7 @@ if (operation == "get"):
 			username = ""
 			print("Enter username associated with password")
 			username = input()
-			matchingUser = lookup_username2(username)
+			matchingUser = lookup_username(username)
 			print("Enter one of the above URLs to get its password")
 			desiredURL = input()
 			for loginInfo in matchingUser:

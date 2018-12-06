@@ -172,9 +172,9 @@ def generate_master_key(masterpassword):
 	return masterkey
 
 
-def verify_inputmpw(inputmpw):
+def verify_input_master_password(input_master_password):
 	salt = get_salt()
-	input_key = PBKDF2(inputmpw, salt, AES.block_size, 500000)
+	input_key = PBKDF2(input_master_password, salt, AES.block_size, 500000)
 	h = SHA256.new()
 	h.update(input_key)
 	input_key_hash = h.digest()

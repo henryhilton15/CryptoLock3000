@@ -1,6 +1,5 @@
 import sys, getopt
 import random
-from Crypto.Protocol.KDF import PBKDF2
 from PasswordHandler import *
 import pyperclip
 
@@ -36,11 +35,8 @@ if (operation != "create") and (operation != "add") and (operation != "get"):
     sys.exit(2)
 
 if (operation == "create"):
-	# check to see if a master password has already been created
-	# if (master password has already been created):
 	try:
 		infofile = open(logininfofile, 'rb')
-	# if infofile.readline() contains some word that lets us know password has been created
 		firstline = infofile.readline()
 		infofile.close()
 	except FileNotFoundError:
@@ -48,8 +44,7 @@ if (operation == "create"):
 		infofile.close()
 		firstline = "".encode('utf-8')
 
-	#print(firstline)
-
+	# check to see if a master password has already been created
 	if (KEY_CREATED.encode('utf-8') in firstline):
 		print("Master password has already been created. Type 'a' to add a password or 'g' to get a password.")
 		switchoperation = ""
@@ -73,18 +68,16 @@ if (operation == "create"):
 		infofile.close()
 		key_to_store = None
 
-
-
 if (operation == "add"):
-	inputmpw = ""
+	input_master_password = ""
 	print("Enter master password.")
-	inputmpw = input()
+	input_master_password = input()
 	login_attempts = 1
-	while(verify_inputmpw(inputmpw) != 1 and login_attempts < 5):
+	while(verify_input_master_password(input_master_password) != 1 and login_attempts < 5):
 		print("Incorrect master password entered. Try again.")
-		inputmpw = input()
+		input_master_password = input()
 		login_attempts += 1
-	if verify_inputmpw(inputmpw) == 1:
+	if verify_input_master_password(input_master_password) == 1:
 		print("here")
 		mode = "e"
 		password = ""
@@ -104,7 +97,7 @@ if (operation == "add"):
 			print("Enter URL associated with password")
 			URL = input()
 
-			masterkey = generate_master_key(inputmpw)
+			masterkey = generate_master_key(input_master_password)
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
 
@@ -120,7 +113,7 @@ if (operation == "add"):
 			password = random_pw_gen()
 			print("Password generated.")
 
-			masterkey = generate_master_key(inputmpw)
+			masterkey = generate_master_key(input_master_password)
 			newLogin = LoginInfo(username, URL, cbc_encrypt(masterkey, password))
 			masterkey = None
 
@@ -132,15 +125,15 @@ if (operation == "add"):
 
 
 if (operation == "get"):
-	inputmpw = ""
+	input_master_password = ""
 	print("Enter master password.")
-	inputmpw = input()
+	input_master_password = input()
 	login_attempts = 1
-	while(verify_inputmpw(inputmpw) != 1 and login_attempts < 5):
+	while(verify_input_master_password(input_master_password) != 1 and login_attempts < 5):
 		print("Incorrect master password entered. Try again.")
-		inputmpw = input()
+		input_master_password = input()
 		login_attempts += 1
-	if verify_inputmpw(inputmpw) == 1:
+	if verify_input_master_password(input_master_password) == 1:
 		mode = "url"
 		print("Enter 'url' to look up accounts by URL. Enter 'user' to look up accounts by username.")
 		mode = input()
@@ -157,7 +150,7 @@ if (operation == "get"):
 			for loginInfo in matchingURL:
 				if loginInfo.username[2:-1] == desiredUser:
 					encrypted_password = loginInfo.password
-					masterkey = generate_master_key(inputmpw)
+					masterkey = generate_master_key(input_master_password)
 					decrypted_password = cbc_decrypt(masterkey, encrypted_password)
 					masterkey = None
 					pyperclip.copy(decrypted_password)
@@ -172,7 +165,7 @@ if (operation == "get"):
 			for loginInfo in matchingUser:
 				if loginInfo.url[2:-1] == desiredURL:
 					encrypted_password = loginInfo.password
-					masterkey = generate_master_key(inputmpw)
+					masterkey = generate_master_key(input_master_password)
 					decrypted_password = cbc_decrypt(masterkey, encrypted_password)
 					masterkey = None
 					pyperclip.copy(decrypted_password)

@@ -150,36 +150,32 @@ if (operation == "get"):
 			URL = ""
 			print("Enter URL associated with password")
 			URL = input()
-			matchingURL = lookup_url(URL)
-			usernamesString = ""
-			for loginInfo in matchingURL:
-				usernamesString += loginInfo.username + "  "
-			print(usernamesString)
+			matchingURL = lookup_url2(URL)
 			print("Enter one of the above usernames to get its password")
-			desiredUsername = input()
+			desiredUser = input()
 			for loginInfo in matchingURL:
-				if loginInfo.username == desiredUsername:
+				if loginInfo.username[2:-1] == desiredUser:
 					encrypted_password = loginInfo.password
 					masterkey = generate_master_key(inputmpw)
-					cbc_decrypt(masterkey, encrypted_password)
+					decrypted_password = cbc_decrypt(masterkey, encrypted_password)
 					masterkey = None
+					print("Test")
+					print(decrypted_password)
 		if mode == "user":
 			username = ""
 			print("Enter username associated with password")
 			username = input()
-			matchingUser = lookup_user(username)
-			URLString = ""
-			for loginInfo in matchingUser:
-				URLString += loginInfo.url + "  "
-			print(URLString)
+			matchingUser = lookup_username2(username)
 			print("Enter one of the above URLs to get its password")
 			desiredURL = input()
 			for loginInfo in matchingUser:
-				if loginInfo.url == desiredURL:
+				if loginInfo.url[2:-1] == desiredURL:
 					encrypted_password = loginInfo.password
 					masterkey = generate_master_key(inputmpw)
-					cbc_decrypt(masterkey, encrypted_password)
+					decrypted_password = cbc_decrypt(masterkey, encrypted_password)
 					masterkey = None
+					print("Test")
+					print(decrypted_password)
 	else:
 		print("Too many incorrect guesses!")
 

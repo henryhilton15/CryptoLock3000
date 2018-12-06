@@ -129,6 +129,12 @@ def cbc_decrypt(key, encrypted):
 
 
     enc_iv = encrypted[:AES.block_size]
+    print(enc_iv.encode('utf-8')) #remove later
+    print("Is enc_iv.encode('utf-8') (above) a string?") #remove later
+    print(isinstance(enc_iv.encode('utf-8'), str)) #remove later
+    #print(enc_iv) #remove later
+    #print("Is enc_iv (above) a string?") #remove later
+    #print(isinstance(enc_iv, str)) #remove later
     encrypted_password = encrypted[AES.block_size:]
 	
     # decrypt iv using AES_ECB
@@ -155,6 +161,17 @@ def lookup_url(url):
 
 	return matching_login_list
 
+def lookup_url2(url):
+	matching_url_list = []
+	userString = ""
+	for loginInfo in loginInfoObjects:
+		if loginInfo.url[2:-1] == url:
+			matching_url_list.append(loginInfo)
+			userString += loginInfo.username[2:-1] + "  "
+	print (userString)
+	return matching_url_list
+
+
 def lookup_username(username):
 	matching_login_list = []
 	for loginInfo in loginInfoObjects:
@@ -162,6 +179,33 @@ def lookup_username(username):
 			matching_login_list.append(loginInfo)
 
 	return matching_login_list
+
+def lookup_username2(username):
+	#print("Input username is string?")
+	#print(isinstance(username, str))
+	#print("Input username encoded is string?")
+	#print(isinstance(username.encode('utf-8'), str))
+	#print (username.encode('utf-8')) # remove later
+	matching_user_list = []
+	URLString = ""
+	#userString = ""
+	for loginInfo in loginInfoObjects:
+		#print (loginInfo.username[2:-1]) #remove later
+		#print ("Above is string?")
+		#print(isinstance(loginInfo.username, str))
+		#if loginInfo.username.decode('utf-8') == username:
+		#if loginInfo.username.encode('utf-8') == username:
+		#if loginInfo.username.encode('utf-8') == username.encode('utf-8'):
+		#if loginInfo.username == username.encode('utf-8'): #PROBLEM is here. LHS byte string is never equal to RHS byte string
+		if loginInfo.username[2:-1] == username: #for some reason the fields of loginInfo objects are being treated as strings in the format b'string' where the b and ' ' are part of the string
+		#if loginInfo.username.equal(username.encode('utf-8')):
+			matching_user_list.append(loginInfo)
+			URLString += loginInfo.url[2:-1] + "  "
+		#userString += loginInfo.username + "  "
+	print (URLString)
+	#print(userString)
+
+	return matching_user_list
 
 def store_master_password(masterpassword):
 	#find a more secure way to do this!

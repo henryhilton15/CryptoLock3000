@@ -1,13 +1,9 @@
-import sys, getopt
-import random
 import pyperclip
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto import Random
-from PasswordHandler import *
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 from Crypto.Util import Padding
-
 
 logininfofile = "infofile.txt"
 loginInfoObjects = []
@@ -93,7 +89,7 @@ def cbc_encrypt(key, password):
 
     # generate a random IV and encrypt it in ECB mode
     iv = Random.get_random_bytes(AES.block_size)
-    #key = keystring.encode('utf-8')
+
     cipher_ECB = AES.new(key, AES.MODE_ECB)
     enc_iv = cipher_ECB.encrypt(iv)
 
@@ -126,7 +122,6 @@ def cbc_decrypt(key, encrypted):
     encrypted_password = encrypted[AES.block_size:]
 	
     # decrypt iv using AES_ECB
-    #key = keystring.encode('utf-8')
     cipher_ECB = AES.new(key, AES.MODE_ECB)
     iv = cipher_ECB.decrypt(enc_iv)
 
@@ -155,7 +150,7 @@ def lookup_username(username):
 	matching_user_list = []
 	URLString = ""
 	for loginInfo in loginInfoObjects:
-		if loginInfo.username[2:-1] == username: #for some reason the fields of loginInfo objects are being treated as strings in the format b'string' where the b and ' ' are part of the string
+		if loginInfo.username[2:-1] == username:
 			matching_user_list.append(loginInfo)
 			URLString += loginInfo.url[2:-1] + "  "
 	print (URLString)
@@ -163,9 +158,8 @@ def lookup_username(username):
 	return matching_user_list
 
 def store_master_password(masterpassword):
-	#find a more secure way to do this!
 	salt = Random.get_random_bytes(16)
-	generated_key = PBKDF2(masterpassword, salt, AES.block_size, 1000)
+	generated_key = PBKDF2(masterpassword, salt, AES.block_size, 500000)
 	h = SHA256.new()
 	h.update(generated_key)
 	key_to_store = h.digest()
@@ -174,13 +168,13 @@ def store_master_password(masterpassword):
 
 def generate_master_key(masterpassword):
 	salt = get_salt()
-	masterkey = PBKDF2(masterpassword, salt, AES.block_size, 1000)
+	masterkey = PBKDF2(masterpassword, salt, AES.block_size, 500000)
 	return masterkey
 
 
 def verify_inputmpw(inputmpw):
 	salt = get_salt()
-	input_key = PBKDF2(inputmpw, salt, AES.block_size, 1000)
+	input_key = PBKDF2(inputmpw, salt, AES.block_size, 500000)
 	h = SHA256.new()
 	h.update(input_key)
 	input_key_hash = h.digest()

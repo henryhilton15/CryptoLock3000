@@ -4,9 +4,6 @@ from Crypto.Protocol.KDF import PBKDF2
 from PasswordHandler import *
 import pyperclip
 
-
-#First decision is whether the user is creating a master password, adding a new password, or getting a password
-
 operation = "create"
 logininfofile = "infofile.txt"
 KEY_CREATED = "Hash of master key:"

@@ -141,6 +141,8 @@ if (operation == "get"):
 			for loginInfo in matchingURL:
 				if loginInfo.username == desiredUsername:
 					encrypted_password = loginInfo.password
+					print("Type of retrieved encrypted password: ")
+					print(type(encrypted_password))
 					cbc_decrypt(get_master_key(), encrypted_password)
 		if mode == "user":
 			username = ""

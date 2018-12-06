@@ -12,13 +12,16 @@ logininfofile = "infofile.txt"
 KEY_CREATED = "Hash of master key:"
 loginInfoObjects = []
 
-init_login_objects()
-
 try:
     opts, args = getopt.getopt(sys.argv[1:],'hcag')
 except getopt.GetoptError:
     print("Usage: master_password.py [-c|-a|-g] -m <masterpassword> -u <username/URL>")
     sys.exit(2)
+
+try:
+	init_login_objects()
+except FileNotFoundError:
+	pass
 
 for opt, arg in opts:
     if opt == '-h':

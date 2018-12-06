@@ -14,7 +14,6 @@ class LoginInfo:
 	def __init__(self, username, url, password):
 		self.username = str(username)
 		self.url = str(url)
-		#self.password = str(password)
 		self.password = password
 
 	def toString():
@@ -51,7 +50,7 @@ def random_pw_gen():
 SEPARATOR = b"|||"
 
 def format_loginInfo(loginInfo):
-	return loginInfo.username.encode('utf-8') + SEPARATOR + loginInfo.url.encode('utf-8') + SEPARATOR + loginInfo.password.encode('utf-8')
+	return loginInfo.username.encode('utf-8') + SEPARATOR + loginInfo.url.encode('utf-8') + SEPARATOR + loginInfo.password
 
 def parse_line(entry):
 	first_sep = entry.find(SEPARATOR, 0, len(entry) - 1)
@@ -115,6 +114,10 @@ def cbc_encrypt(key, password):
     
     encrypted = enc_iv + encrypted_password
 
+    print("Type of encrypted: ")
+
+    print(type(encrypted))
+
     return encrypted
 
 
@@ -128,6 +131,7 @@ def cbc_decrypt(key, encrypted):
         print('Error: No password to decrypt')
         sys.exit(2)
 
+    print(encrypted)
 
     enc_iv = encrypted[:AES.block_size]
     #print(enc_iv.encode('utf-8')) #remove later
@@ -140,6 +144,8 @@ def cbc_decrypt(key, encrypted):
 	
     # decrypt iv using AES_ECB
     #key = keystring.encode('utf-8')
+    print("enc_iv:" )
+    print(enc_iv)
     cipher_ECB = AES.new(key, AES.MODE_ECB)
     iv = cipher_ECB.decrypt(enc_iv)
 

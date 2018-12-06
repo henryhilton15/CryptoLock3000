@@ -1,11 +1,13 @@
 import sys, getopt
 import random
+import pyperclip
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto import Random
 from PasswordHandler import *
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 from Crypto.Util import Padding
+
 
 logininfofile = "infofile.txt"
 loginInfoObjects = []
@@ -69,18 +71,10 @@ def init_login_objects():
 	for line in loginInfoFile:
 		loginInfo = parse_line(line)
 		loginInfoObjects.append(loginInfo)
-		print("Retrieved password: ")
-		print(loginInfo.password)
-		print("Retrieved username: ")
-		print(loginInfo.username)
+
 
 def update_login_file(newLogin):
 	loginInfoObjects.append(newLogin)
-
-	print("Password stored:")
-	print(newLogin.password)
-	print("Username stored:")
-	print(newLogin.username)
 
 	infofile = open(logininfofile, 'ab')
 	infofile.write(format_loginInfo(newLogin) + b"\n")
@@ -114,10 +108,6 @@ def cbc_encrypt(key, password):
     
     encrypted = enc_iv + encrypted_password
 
-    print("Type of encrypted: ")
-
-    print(type(encrypted))
-
     return encrypted
 
 
@@ -131,21 +121,12 @@ def cbc_decrypt(key, encrypted):
         print('Error: No password to decrypt')
         sys.exit(2)
 
-    print(encrypted)
-
     enc_iv = encrypted[:AES.block_size]
-    #print(enc_iv.encode('utf-8')) #remove later
-    #print("Is enc_iv.encode('utf-8') (above) a string?") #remove later
-    #print(isinstance(enc_iv.encode('utf-8'), str)) #remove later
-    #print(enc_iv) #remove later
-    #print("Is enc_iv (above) a string?") #remove later
-    #print(isinstance(enc_iv, str)) #remove later
+
     encrypted_password = encrypted[AES.block_size:]
 	
     # decrypt iv using AES_ECB
     #key = keystring.encode('utf-8')
-    print("enc_iv:" )
-    print(enc_iv)
     cipher_ECB = AES.new(key, AES.MODE_ECB)
     iv = cipher_ECB.decrypt(enc_iv)
 

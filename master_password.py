@@ -2,6 +2,7 @@ import sys, getopt
 import random
 from Crypto.Protocol.KDF import PBKDF2
 from PasswordHandler import *
+import pyperclip
 
 
 #First decision is whether the user is creating a master password, adding a new password, or getting a password
@@ -162,8 +163,8 @@ if (operation == "get"):
 					masterkey = generate_master_key(inputmpw)
 					decrypted_password = cbc_decrypt(masterkey, encrypted_password)
 					masterkey = None
-					print("Test")
-					print(decrypted_password)
+					pyperclip.copy(decrypted_password)
+					print("Password has been copied to the clipboard")		
 		if mode == "user":
 			username = ""
 			print("Enter username associated with password")
@@ -177,7 +178,7 @@ if (operation == "get"):
 					masterkey = generate_master_key(inputmpw)
 					decrypted_password = cbc_decrypt(masterkey, encrypted_password)
 					masterkey = None
-					print("Test")
-					print(decrypted_password)
+					pyperclip.copy(decrypted_password)
+					print("Password has been copied to the clipboard")
 	else:
 		print("Too many incorrect guesses!")

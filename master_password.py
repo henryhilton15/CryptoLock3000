@@ -123,7 +123,6 @@ if (operation == "add"):
 		print("Too many incorrect guesses!")
 
 
-
 if (operation == "get"):
 	input_master_password = ""
 	print("Enter master password.")
@@ -154,7 +153,7 @@ if (operation == "get"):
 					decrypted_password = cbc_decrypt(masterkey, encrypted_password)
 					masterkey = None
 					pyperclip.copy(decrypted_password)
-					print("Password has been copied to the clipboard")		
+					print("Password has been copied to the clipboard")
 		if mode == "user":
 			username = ""
 			print("Enter username associated with password")

@@ -78,7 +78,6 @@ if (operation == "add"):
 		input_master_password = input()
 		login_attempts += 1
 	if verify_input_master_password(input_master_password) == 1:
-		print("here")
 		mode = "e"
 		password = ""
 		username = ""
@@ -120,7 +119,7 @@ if (operation == "add"):
 			update_login_file(newLogin)
 
 	else:
-		print("Too many incorrect guesses!")
+		print("Too many incorrect guesses! Your master password has been locked.")
 
 
 if (operation == "get"):

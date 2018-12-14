@@ -75,6 +75,8 @@ class LoginFrame(Frame):
         text = P.stdout.readline() # Password generated.
         self.toplevel_launch(text)
 
+        time.sleep(1)
+
         P.kill()
 
     def _input_password_btn_clicked(self):
@@ -136,6 +138,8 @@ class LoginFrame(Frame):
 
         text = P.stdout.readline() # Password generated.
         self.toplevel_launch(text)
+
+        time.sleep(1)
 
         P.kill()
 
@@ -206,7 +210,7 @@ class LoginFrame(Frame):
         text = text.strip()
 
         if text != b'Create master password by entering it now.':
-            text = "Sorry MR. HackerMan!! A Master Password already exists! To create a new one you must erase all encrypted data by deleting the infofile and start fresh."
+            text = "Slow down MR. HackerMan!! A Master Password already exists! To create a new one you must erase all encrypted data by deleting the infofile and start fresh."
             self.toplevel_launch(text)
             masterPassword = None
             P.kill()
